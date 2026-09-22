@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Road to Divisionals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F2F4EE;
+    --surface: #E7EBE0;
+    --ink: #1E2A22;
+    --ink-soft: #4C5A4E;
+    --line: #D6DACC;
+    --rust: #BF5B1E;
+    --moss: #4B6B43;
+    --gold: #B4841F;
+    --teal: #33627A;
+    --plum: #74508F;
+    --clay: #8C5A2B;
+    --berry: #A0353C;
+    --slate: #4A5A78;
+    --grey: #7C8177;
+    --shadow: none;
+    --radius: 3px;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #12180F;
+      --surface: #1B2317;
+      --ink: #E9EEE4;
+      --ink-soft: #ABB6A4;
+      --line: #2C3526;
+      --rust: #E07A3D;
+      --moss: #83AE75;
+      --gold: #D8AE4F;
+      --teal: #5FA0BE;
+      --plum: #A87FC4;
+      --clay: #C68A50;
+      --berry: #D66A70;
+      --slate: #8B9DC7;
+      --grey: #96998F;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #12180F;
+    --surface: #1B2317;
+    --ink: #E9EEE4;
+    --ink-soft: #ABB6A4;
+    --line: #2C3526;
+    --rust: #E07A3D;
+    --moss: #83AE75;
+    --gold: #D8AE4F;
+    --teal: #5FA0BE;
+    --plum: #A87FC4;
+    --clay: #C68A50;
+    --berry: #D66A70;
+    --slate: #8B9DC7;
+    --grey: #96998F;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  html {
+    scroll-padding-top: env(safe-area-inset-top, 0px);
+  }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Source Sans 3", system-ui, -apple-system, "Segoe UI", sans-serif;
+    line-height: 1.5;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    -webkit-font-smoothing: antialiased;
+  }
+  .page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2.5rem 1.25rem 4rem;
+  }
+  h1, h2, h3 {
+    font-family: "Oswald", "Arial Narrow", sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    color: var(--ink);
+    margin: 0;
+  }
+  h1 { font-size: clamp(2rem, 6vw, 2.9rem); font-weight: 700; line-height: 1.05; }
+  h2 { font-size: 1.4rem; margin-bottom: 0.9rem; }
+  .num { font-family: "JetBrains Mono", "Courier New", monospace; }
+
+  /* ---- Masthead ---- */
+  .masthead { margin-bottom: 2.2rem; }
+  .masthead p.sub {
+    color: var(--ink-soft);
+    font-size: 1.02rem;
+    max-width: 42ch;
+    margin: 0.6rem 0 0;
+  }
+
+  /* ---- Course line (hero / nav) ---- */
+  .course-wrap {
+    margin: 1.8rem 0 2.6rem;
+    overflow-x: auto;
+  }
+  .course-line {
+    position: relative;
+    display: flex;
+    min-width: 640px;
+    padding: 0.4rem 0 2.1rem;
+  }
+  .course-track {
+    position: absolute;
+    top: 15px;
+    left: 22px;
+    right: 22px;
+    height: 2px;
+    background: repeating-linear-gradient(90deg, var(--line) 0 8px, transparent 8px 14px);
+  }
+  .stop {
+    position: relative;
+    flex: 1;
+    text-align: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: "Source Sans 3", sans-serif;
+    color: var(--ink-soft);
+    padding-top: 2px;
+  }
+  .stop .dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 2px solid var(--ink-soft);
+    margin: 0 auto 0.5rem;
+    position: relative; z-index: 1;
+  }
+  .stop.is-race .dot { background: var(--gold); border-color: var(--gold); width: 15px; height: 15px; }
+  .stop.is-active .dot { border-color: var(--rust); background: var(--rust); }
+  .stop .wk { display:block; font-size: 0.78rem; }
+  .stop .race-name { display:block; font-size: 0.72rem; margin-top: 2px; color: var(--gold); font-weight: 600; }
+  .stop.is-active .wk { color: var(--rust); font-weight: 600; }
+
+  /* ---- Guide & Strength sections ---- */
+  section.block { margin-bottom: 2.6rem; }
+  .guide-note, .strength-note {
+    color: var(--ink-soft);
+    max-width: 68ch;
+    margin: 0 0 1.1rem;
+  }
+  .guide-grid {
+    display: grid;
+    grid-template-columns: minmax(150px, auto) minmax(140px, auto) 1fr;
+    row-gap: 0.65rem;
+    column-gap: 1.1rem;
+    border-top: 1px solid var(--line);
+    padding-top: 0.9rem;
+  }
+  .guide-grid .g-label { font-weight: 600; }
+  .guide-grid .g-pace { font-family: "JetBrains Mono", monospace; font-size: 0.92rem; color: var(--ink-soft); }
+  .guide-grid .g-feel { color: var(--ink-soft); font-size: 0.95rem; }
+  .guide-grid > div { padding-bottom: 0.65rem; border-bottom: 1px solid var(--line); }
+
+  .strength-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1.6rem; }
+  @media (max-width: 620px) { .strength-cols { grid-template-columns: 1fr; } }
+  .strength-cols h3 { font-size: 1.05rem; margin-bottom: 0.3rem; }
+  .strength-cols .tag { color: var(--ink-soft); font-size: 0.85rem; margin-bottom: 0.6rem; display:block; }
+  .strength-cols ul { margin: 0; padding-left: 1.1rem; }
+  .strength-cols li { margin-bottom: 0.35rem; }
+  .strength-prog { margin-top: 1.1rem; padding-top: 0.9rem; border-top: 1px solid var(--line); color: var(--ink-soft); max-width: 68ch; }
+
+  /* ---- Week tabs & calendar ---- */
+  .week-tabs {
+    display: flex; flex-wrap: wrap; gap: 0.4rem;
+    margin-bottom: 1.2rem;
+  }
+  .week-tabs button {
+    font-family: "Source Sans 3", sans-serif;
+    font-size: 0.88rem;
+    padding: 0.4rem 0.75rem;
+    background: var(--surface);
+    color: var(--ink-soft);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    cursor: pointer;
+  }
+  .week-tabs button.active {
+    background: var(--ink);
+    color: var(--bg);
+    border-color: var(--ink);
+  }
+  .week-tabs button:focus-visible, .stop:focus-visible { outline: 2px solid var(--rust); outline-offset: 2px; }
+
+  .week-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    flex-wrap: wrap; gap: 0.5rem 1.2rem;
+    padding-bottom: 0.7rem; margin-bottom: 0.3rem;
+    border-bottom: 2px solid var(--ink);
+  }
+  .week-head .wh-title { font-family:"Oswald", sans-serif; font-size: 1.2rem; font-weight: 600; }
+  .week-head .wh-dates { color: var(--ink-soft); font-size: 0.92rem; }
+  .week-head .wh-mi { font-family:"JetBrains Mono", monospace; font-size: 1rem; }
+  .week-note {
+    color: var(--ink-soft); font-size: 0.95rem; max-width: 70ch;
+    margin: 0.7rem 0 1.3rem;
+  }
+
+  .day {
+    display: grid;
+    grid-template-columns: 76px 1fr;
+    column-gap: 1rem;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .day .d-when { padding-top: 0.15rem; }
+  .day .d-day { font-weight: 600; font-size: 0.92rem; }
+  .day .d-date { color: var(--ink-soft); font-size: 0.82rem; }
+  .day .d-mi { font-family:"JetBrains Mono", monospace; font-size: 0.82rem; color: var(--ink-soft); margin-top: 0.3rem; }
+  .day .d-body { border-left: 3px solid var(--grey); padding-left: 0.9rem; }
+  .day.is-race .d-body { border-left-color: var(--gold); }
+  .pill-row { display:flex; flex-wrap:wrap; gap: 0.4rem; margin-bottom: 0.35rem; }
+  .pill {
+    display: inline-block;
+    font-size: 0.76rem;
+    padding: 0.12rem 0.55rem;
+    border-radius: 999px;
+    border: 1px solid currentColor;
+  }
+  .d-title { font-weight: 600; margin-bottom: 0.2rem; }
+  .d-detail { color: var(--ink-soft); font-size: 0.94rem; max-width: 68ch; }
+
+  /* ---- Rules ---- */
+  .rules ul { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+  .rules li {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.15rem;
+  }
+  .rules .if { font-weight: 600; }
+  .rules .then { color: var(--ink-soft); }
+
+  footer {
+    margin-top: 3rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--line);
+    color: var(--ink-soft);
+    font-size: 0.88rem;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="masthead">
+    <h1>The Road to Divisionals</h1>
+    <p class="sub">Eight weeks of training from today through the Divisional Championship on November 14 — built around the races that already exist on your calendar.</p>
+  </header>
+
+  <div class="course-wrap">
+    <div class="course-line" id="course-line">
+      <div class="course-track"></div>
+      <!-- stops injected by JS -->
+    </div>
+  </div>
+
+  <section class="block">
+    <h2>Pace &amp; effort guide</h2>
+    <p class="guide-note">These are estimated starting points built from your current PRs, not measured from your actual training paces — I don't have those yet. Run by effort first, splits second. Ocean State and Twilight will give real data to sharpen every number below.</p>
+    <div class="guide-grid">
+      <div><span class="g-label">Easy</span></div>
+      <div><span class="g-pace">6:50–7:20 /mi</span></div>
+      <div><span class="g-feel">Conversational the whole way. This is most of your mileage.</span></div>
+
+      <div><span class="g-label">Long run</span></div>
+      <div><span class="g-pace">6:50–7:15 /mi</span></div>
+      <div><span class="g-feel">Steady and aerobic. Last mile or two can firm up if legs are fresh.</span></div>
+
+      <div><span class="g-label">Threshold / tempo</span></div>
+      <div><span class="g-pace">6:00–6:15 /mi</span></div>
+      <div><span class="g-feel">Comfortably hard — a pace you could hold 15–20 more minutes if you had to.</span></div>
+
+      <div><span class="g-label">VO2 / speed reps</span></div>
+      <div><span class="g-pace">5:35–5:45 /mi (~3:28–3:35/K)</span></div>
+      <div><span class="g-feel">Hard but controlled and repeatable — not the 3:20/K from Monday's session.</span></div>
+
+      <div><span class="g-label">5K-specific reps</span></div>
+      <div><span class="g-pace">5:44–5:50 /mi</span></div>
+      <div><span class="g-feel">The rhythm you actually want to hold at Divisionals.</span></div>
+
+      <div><span class="g-label">Hills</span></div>
+      <div><span class="g-pace">effort, not pace</span></div>
+      <div><span class="g-feel">Powerful and hard uphill, full recovery jogging down.</span></div>
+
+      <div><span class="g-label">Race — controlled</span></div>
+      <div><span class="g-pace">~85–90% effort</span></div>
+      <div><span class="g-feel">Dual meets. Practice rhythm, don't empty the tank.</span></div>
+
+      <div><span class="g-label">Race — all out</span></div>
+      <div><span class="g-pace">full effort</span></div>
+      <div><span class="g-feel">Ocean State, Twilight, DCL, Divisional. Race the field, not a number.</span></div>
+    </div>
+  </section>
+
+  <section class="block">
+    <h2>Strength toolkit</h2>
+    <p class="strength-note">Two short sessions a week early in the block, dropping to one as racing gets more frequent. Always paired with an easy day — never the day before a hard workout or race.</p>
+    <div class="strength-cols">
+      <div>
+        <h3>Session A — full</h3>
+        <span class="tag">~25–30 min · Weeks 1–5, then Week 7</span>
+        <ul>
+          <li>Single-leg RDL — 3×8 each leg</li>
+          <li>Bulgarian split squat / walking lunge — 3×8 each leg</li>
+          <li>Glute bridge or hip thrust — 3×12</li>
+          <li>Calf raises, straight + bent knee — 3×15 each</li>
+          <li>Side plank with leg lift — 2×30s each side</li>
+          <li>Plank — 2×30–45s</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Session B — light</h3>
+        <span class="tag">~15 min · Second weekly session, and all of Week 6 &amp; 8</span>
+        <ul>
+          <li>Single-leg balance reach — 2×8 each leg</li>
+          <li>Clamshells or monster walks — 2×12 each side</li>
+          <li>Calf raises — 2×15</li>
+          <li>Plank — 2×30s</li>
+        </ul>
+      </div>
+    </div>
+    <p class="strength-prog">Progression: full frequency (A+B) through the peak build in Week 4–5. From Week 6 on, one session a week is enough — legs need to be fresh for racing, not sore from squats. In taper week, one short Session B on Monday only, then nothing until after Divisional.</p>
+  </section>
+
+  <section class="block calendar">
+    <h2>Week by week</h2>
+    <div class="week-tabs" id="week-tabs"></div>
+    <div id="week-panel"></div>
+  </section>
+
+  <section class="block rules">
+    <h2>If this happens, do this</h2>
+    <ul>
+      <li><span class="if">Legs unusually heavy before a workout</span><span class="then">Swap it for an easy run. Reattempt later in the week if there's room — don't cram it into an already-planned day.</span></li>
+      <li><span class="if">You miss a workout entirely</span><span class="then">Let it go. Resume the plan where you are — don't double up later to make up mileage.</span></li>
+      <li><span class="if">A race goes harder than planned</span><span class="then">Treat the next two days as recovery no matter what's scheduled, even if it means skipping a planned quality session.</span></li>
+      <li><span class="if">You feel excellent</span><span class="then">Fine to run the top of a mileage range or hit paces confidently — don't add extra volume or reps that aren't on the plan.</span></li>
+      <li><span class="if">Mileage is causing fatigue across several days</span><span class="then">Cut 10–15% off that week's total. A real down week beats forcing through one.</span></li>
+      <li><span class="if">Minor, symmetric soreness that eases as you warm up</span><span class="then">Easy running is fine. Skip strides and hard efforts until it resolves.</span></li>
+      <li><span class="if">Sharp, one-sided, or worsening pain</span><span class="then">Skip the run rather than modify it. Flag it to a trainer or coach if it hasn't resolved in a couple of days.</span></li>
+      <li><span class="if">Sick — above the neck (congestion, sore throat)</span><span class="then">Easy running is usually fine if you feel up to it. Skip the workout itself.</span></li>
+      <li><span class="if">Sick — below the neck (fever, chest, GI, body aches)</span><span class="then">Rest completely until it's fully gone.</span></li>
+      <li><span class="if">Weather wrecks a planned workout</span><span class="then">Move the session to the nearest available day or indoors rather than skip its intent. If that's not possible, just run easy — don't stack two hard days close together to compensate.</span></li>
+      <li><span class="if">An unexpected meet gets added</span><span class="then">Treat it like a dual meet — controlled, not all-out — and drop whatever workout was scheduled that week to hold the line at two hard stimuli.</span></li>
+    </ul>
+  </section>
+
+  <footer>Built from your current mileage, race calendar, and history — update it as Ocean State and Twilight give real feedback on paces and recovery.</footer>
+</div>
+
+<script>
+const weeks = [
+{
+  num:1, dates:"Sep 21–27", phase:"Reset", miles:"~34", race:"Ocean State",
+  note:"Absorbing last week's jump to 45mi. One race, otherwise all easy — deliberate, not a step back.",
+  days:[
+    {day:"Mon",date:"Sep 21",type:"vo2",miles:"~9",title:"6×1K — completed",detail:"Already in the books. Splits drifted hard (3:20→3:58) — you went out closer to mile effort on tired legs and an empty stomach. Lesson banked, not a problem to fix today: eat before early sessions, and the next rep session starts closer to 3:30/K."},
+    {day:"Tue",date:"Sep 22",type:"easy",miles:"~5",title:"Easy + strides",detail:"Conversational pace + 4×100m relaxed strides. Legs should feel loose, not worked."},
+    {day:"Wed",date:"Sep 23",type:"easy",strength:"A",miles:"~5",title:"Easy + Strength A",detail:"Easy conversational pace. Strength Session A in the evening or after the run."},
+    {day:"Thu",date:"Sep 24",type:"easy",miles:"~4",title:"Easy-moderate + strides",detail:"A notch quicker than Tuesday if legs are fresh, still comfortable. 4×100m strides."},
+    {day:"Fri",date:"Sep 25",type:"shakeout",miles:"~3",title:"Shakeout",detail:"Very easy. Legs should feel like they're waking up, not being tested. Skip strides if there's any lingering heaviness."},
+    {day:"Sat",date:"Sep 26",type:"race-priority",miles:"~5",title:"Ocean State Invitational — all out",detail:"Race the field and the effort, not a number — 17:20–17:30 is a bigger ask than your PRs currently support. Full warm-up: 15min easy jog, drills, 3–4 strides at race effort before the gun."},
+    {day:"Sun",date:"Sep 27",type:"recovery",miles:"~3",title:"Recovery",detail:"Very easy jog or full rest, whichever your legs want. Foam roll, extra sleep — this is where the race gets absorbed."},
+  ]
+},
+{
+  num:2, dates:"Sep 28–Oct 4", phase:"Build", miles:"~41", race:null,
+  note:"First real threshold work of the block. Wednesday's dual isn't a hard day — your team doesn't race duals seriously — so it slots in as a controlled effort.",
+  days:[
+    {day:"Mon",date:"Sep 28",type:"threshold",miles:"~8",title:"Threshold: 3×1.5mi",detail:"3×1.5mi @ 6:00–6:15/mi, 2min jog recovery. Warm up 1.5mi easy + drills + 3 strides; cool down 1.5mi. Should feel comfortably hard and controlled, not a grind — targets the aerobic gap between your 2-mile and 5K."},
+    {day:"Tue",date:"Sep 29",type:"easy",strength:"A",miles:"~5",title:"Easy + Strength A",detail:"Easy pace, Strength Session A."},
+    {day:"Wed",date:"Sep 30",type:"race-controlled",miles:"~6",title:"Dual vs AB — controlled",detail:"~85–90% effort. A chance to rehearse race rhythm without full risk — don't go out at mile pace like Monday's 1Ks."},
+    {day:"Thu",date:"Oct 1",type:"recovery",miles:"~4",title:"Recovery",detail:"Easy and short. Legs should feel normal by tomorrow."},
+    {day:"Fri",date:"Oct 2",type:"easy",strength:"B",miles:"~5",title:"Easy + strides + Strength B",detail:"Easy + 5×100m strides + Strength Session B (lighter)."},
+    {day:"Sat",date:"Oct 3",type:"long",miles:"~9",title:"Long run",detail:"Steady, 6:50–7:15/mi. Conversational for most of it; last 2mi can firm up if legs are good."},
+    {day:"Sun",date:"Oct 4",type:"recovery",miles:"~4",title:"Recovery",detail:"Easy, conversational. Full recovery before next week's double-race stretch."},
+  ]
+},
+{
+  num:3, dates:"Oct 5–11", phase:"Build → sharpen", miles:"~35", race:"Twilight",
+  note:"Two racing efforts this week — a dual and Twilight — is plenty of stimulus on its own. No separate hard workout; the priority is protecting Saturday.",
+  days:[
+    {day:"Mon",date:"Oct 5",type:"easy",miles:"~7",title:"Aerobic easy + strides",detail:"No structured workout — this week's intensity comes from racing. 6×100m strides."},
+    {day:"Tue",date:"Oct 6",type:"easy",strength:"A",miles:"~6",title:"Easy + Strength A (light)",detail:"Trim a set if legs feel Twilight-heavy."},
+    {day:"Wed",date:"Oct 7",type:"race-controlled",miles:"~6",title:"Dual vs Lincoln-Sudbury — controlled",detail:"Same approach as last week's dual. Don't let this bleed into Saturday's freshness."},
+    {day:"Thu",date:"Oct 8",type:"recovery",miles:"~5",title:"Recovery",detail:"Easy, a little shorter than usual — start backing off for Twilight."},
+    {day:"Fri",date:"Oct 9",type:"shakeout",miles:"~3",title:"Shakeout",detail:"Very easy + a few strides. Legs should feel sharp, not flat."},
+    {day:"Sat",date:"Oct 10",type:"race-priority",miles:"~5",title:"Twilight Invitational — all out",detail:"Same approach as Ocean State: race the effort and the field. Your second real data point on where fitness actually sits."},
+    {day:"Sun",date:"Oct 11",type:"recovery",miles:"~3",title:"Recovery",detail:"Very easy or rest. This was a genuinely demanding stretch — respect it."},
+  ]
+},
+{
+  num:4, dates:"Oct 12–18", phase:"Peak build", miles:"~44", race:null,
+  note:"Biggest week of the season on purpose — no races, so the training itself carries the load. This is where most of the 5K improvement gets made.",
+  days:[
+    {day:"Mon",date:"Oct 12",type:"threshold",miles:"~8",title:"Threshold: 2×2mi",detail:"2×2mi @ 6:00–6:10/mi, 3min jog recovery. Warm-up/cooldown 1.5mi each. Continues closing the aerobic-endurance gap."},
+    {day:"Tue",date:"Oct 13",type:"easy",strength:"A",miles:"~5",title:"Easy + Strength A",detail:"Easy pace, full strength session."},
+    {day:"Wed",date:"Oct 14",type:"easy",miles:"~5",title:"Easy + strides",detail:"Easy + 6×100m strides."},
+    {day:"Thu",date:"Oct 15",type:"hills",miles:"~7",title:"Hill repeats: 8×45sec",detail:"8×45sec hard uphill (powerful, not flat-out), full jog-down recovery. Warm-up 1.5mi + drills, cooldown 1.5mi. A change of stimulus from flat threshold work, builds strength and economy."},
+    {day:"Fri",date:"Oct 16",type:"easy",strength:"B",miles:"~5",title:"Easy + Strength B",detail:"Easy pace, lighter strength session."},
+    {day:"Sat",date:"Oct 17",type:"long",miles:"~10",title:"Peak long run",detail:"Longest run of the block, steady 6:50–7:10/mi. If this feels notably harder than Week 2's 9-miler, that's a signal to hold Week 5 flat rather than push higher."},
+    {day:"Sun",date:"Oct 18",type:"recovery",miles:"~4",title:"Recovery",detail:"Genuinely easy. You just did the biggest week of the season — respect it."},
+  ]
+},
+{
+  num:5, dates:"Oct 19–25", phase:"Build → 5K-specific", miles:"~43", race:null,
+  note:"Shifting from pure aerobic work toward the actual rhythm you'll race at Divisionals. Volume holds near-peak.",
+  days:[
+    {day:"Mon",date:"Oct 19",type:"fivek",miles:"~8",title:"5K-specific: 4×1200m",detail:"4×1200m @ 5:44–5:50/mi (goal race rhythm), 2–3min jog recovery. Warm-up 1.5mi + drills + strides, cooldown 1.5mi. Teaches legs and lungs the actual pace you want to hold in November."},
+    {day:"Tue",date:"Oct 20",type:"easy",strength:"A",miles:"~6",title:"Easy + Strength A",detail:"Easy pace, full strength session."},
+    {day:"Wed",date:"Oct 21",type:"race-controlled",miles:"~6",title:"Dual vs CC — controlled",detail:"~85–90% effort."},
+    {day:"Thu",date:"Oct 22",type:"recovery",miles:"~5",title:"Recovery",detail:"Easy."},
+    {day:"Fri",date:"Oct 23",type:"easy",strength:"B",miles:"~5",title:"Easy + strides + Strength B",detail:"Easy + strides + light strength."},
+    {day:"Sat",date:"Oct 24",type:"long",miles:"~9",title:"Long run",detail:"Steady. Slightly shorter than last week's peak — intentional, DCL is coming up."},
+    {day:"Sun",date:"Oct 25",type:"recovery",miles:"~4",title:"Recovery",detail:"Easy."},
+  ]
+},
+{
+  num:6, dates:"Oct 26–Nov 1", phase:"Sharpen — DCL", miles:"~33", race:"DCL",
+  note:"DCL is a real priority race. Volume drops on purpose starting Monday — this is a taper into a race that matters, not a fatigue-driven cutback.",
+  days:[
+    {day:"Mon",date:"Oct 26",type:"threshold",miles:"~7",title:"Sharpening: 5×3min",detail:"5×3min @ threshold-to-5K effort, 2min jog recovery. Shorter and less taxing than Weeks 4–5 — the goal now is staying sharp, not building more fitness."},
+    {day:"Tue",date:"Oct 27",type:"easy",strength:"B",miles:"~5",title:"Easy + optional light strength",detail:"Skip the strength if legs don't feel great — DCL comes first."},
+    {day:"Wed",date:"Oct 28",type:"easy",miles:"~5",title:"Easy + strides",detail:"Easy + 4–5×100m strides."},
+    {day:"Thu",date:"Oct 29",type:"shakeout",miles:"~3",title:"Shakeout",detail:"Very easy + strides. Legs should be feeling sharp by now."},
+    {day:"Fri",date:"Oct 30",type:"race-priority",miles:"~5",title:"DCL Championship — all out",detail:"One of your two real goal races this fall. Full warm-up, race the field."},
+    {day:"Sat",date:"Oct 31",type:"recovery",miles:"~4",title:"Recovery",detail:"Very easy or rest, whichever legs want. Full recovery from a priority race — no negotiating."},
+    {day:"Sun",date:"Nov 1",type:"easy",miles:"~4",title:"Easy",detail:"Resume light aerobic running."},
+  ]
+},
+{
+  num:7, dates:"Nov 2–8", phase:"Absorb → sharpen", miles:"~38", race:"Coaches Inv. (optional)",
+  note:"First half of the week absorbs DCL, second half starts building sharpness for Divisional. Coaches Invitational Saturday is optional for you.",
+  days:[
+    {day:"Mon",date:"Nov 2",type:"easy",miles:"~6",title:"Easy",detail:"No quality yet — still absorbing DCL."},
+    {day:"Tue",date:"Nov 3",type:"easy",miles:"~5",title:"Easy + strides",detail:"Easy + 6×100m strides."},
+    {day:"Wed",date:"Nov 4",type:"easy",strength:"A",miles:"~5",title:"Easy + Strength A",detail:"Resume normal strength volume."},
+    {day:"Thu",date:"Nov 5",type:"fivek",miles:"~8",title:"5K-specific: 3×1mi",detail:"3×1mi @ 5:44–5:50/mi, 3min jog recovery. Last real rehearsal of Divisional rhythm before the taper starts."},
+    {day:"Fri",date:"Nov 6",type:"easy",miles:"~4",title:"Easy",detail:"Shakeout ahead of the weekend."},
+    {day:"Sat",date:"Nov 7",type:"optional",miles:"~6",title:"Coaches Invitational — not racing",detail:"Go with the team, warm up like you're racing, run a controlled (not all-out) effort simulating race rhythm — or cheer teammates and do your own easy 4mi if you'd rather stay completely fresh. Either is fine; not a day to create fatigue."},
+    {day:"Sun",date:"Nov 8",type:"easy",miles:"~4",title:"Easy",detail:"Easy."},
+  ]
+},
+{
+  num:8, dates:"Nov 9–15", phase:"Taper — Divisional", miles:"~26", race:"Divisional",
+  note:"The goal this week is arriving fresh, not fitter. Volume drops hard; a little sharpness stays in through short, fast strides and reps early in the week.",
+  days:[
+    {day:"Mon",date:"Nov 9",type:"vo2",miles:"~6",title:"Sharpening: 4×400m",detail:"4×400m @ slightly faster than 5K effort, full 2–3min jog recovery. A small dose that keeps legs snappy without costing anything by Saturday."},
+    {day:"Tue",date:"Nov 10",type:"easy",miles:"~4",title:"Easy + strides",detail:"Easy + 4×100m strides."},
+    {day:"Wed",date:"Nov 11",type:"easy",miles:"~4",title:"Easy, short",detail:"Start protecting energy more than mileage now."},
+    {day:"Thu",date:"Nov 12",type:"shakeout",miles:"~3",title:"Shakeout + strides",detail:"Short shakeout + 4×100m strides at race effort — enough to remind your legs what fast feels like."},
+    {day:"Fri",date:"Nov 13",type:"shakeout",miles:"~2",title:"Very easy",detail:"A few relaxed strides if you want them. The work is done — today is sleep, food, and confidence, not training."},
+    {day:"Sat",date:"Nov 14",type:"race-priority",miles:"~5",title:"DIVISIONAL CHAMPIONSHIP",detail:"Full warm-up you trust. Race it exactly like Ocean State and Twilight taught you — controlled into aggressive, working hardest in the last mile, not just surviving it."},
+    {day:"Sun",date:"Nov 15",type:"recovery",miles:"~2",title:"Recovery / rest",detail:"Very easy jog or full rest. Season's done — well earned."},
+  ]
+},
+];
+
+const typeMeta = {
+  "easy":       {label:"Easy",              color:"var(--moss)"},
+  "long":       {label:"Long run",          color:"var(--teal)"},
+  "threshold":  {label:"Threshold",         color:"var(--rust)"},
+  "vo2":        {label:"VO2 / speed",       color:"var(--berry)"},
+  "hills":      {label:"Hills",             color:"var(--clay)"},
+  "fivek":      {label:"5K-specific",       color:"var(--plum)"},
+  "race-priority":   {label:"Race — all out",    color:"var(--gold)"},
+  "race-controlled": {label:"Race — controlled", color:"var(--gold)"},
+  "recovery":   {label:"Recovery",          color:"var(--grey)"},
+  "shakeout":   {label:"Shakeout",          color:"var(--moss)"},
+  "optional":   {label:"Optional",          color:"var(--grey)"},
+};
+const strengthMeta = {A:"Strength A", B:"Strength B"};
+
+let activeWeek = 1;
+
+function renderCourseLine(){
+  const el = document.getElementById("course-line");
+  el.querySelectorAll(".stop").forEach(n=>n.remove());
+  weeks.forEach(w=>{
+    const btn = document.createElement("button");
+    btn.className = "stop" + (w.race ? " is-race":"") + (w.num===activeWeek ? " is-active":"");
+    btn.setAttribute("aria-label", "Week "+w.num+(w.race?", "+w.race:""));
+    btn.innerHTML = '<span class="dot"></span><span class="wk">Wk '+w.num+'</span>'+(w.race?'<span class="race-name">'+w.race+'</span>':'');
+    btn.addEventListener("click", ()=>selectWeek(w.num));
+    el.appendChild(btn);
+  });
+}
+
+function renderTabs(){
+  const el = document.getElementById("week-tabs");
+  el.innerHTML = "";
+  weeks.forEach(w=>{
+    const btn = document.createElement("button");
+    btn.textContent = "Week "+w.num;
+    btn.className = w.num===activeWeek ? "active":"";
+    btn.setAttribute("role","tab");
+    btn.addEventListener("click", ()=>selectWeek(w.num));
+    el.appendChild(btn);
+  });
+}
+
+function renderWeek(){
+  const w = weeks.find(x=>x.num===activeWeek);
+  const panel = document.getElementById("week-panel");
+  let html = '<div class="week-head">'
+    + '<span class="wh-title">Week '+w.num+' — '+w.phase+'</span>'
+    + '<span class="wh-dates">'+w.dates+'</span>'
+    + '<span class="wh-mi num">'+w.miles+' mi</span>'
+    + '</div>';
+  html += '<p class="week-note">'+w.note+'</p>';
+  w.days.forEach(d=>{
+    const meta = typeMeta[d.type];
+    const isRace = d.type.startsWith("race");
+    html += '<div class="day'+(isRace?" is-race":"")+'">'
+      + '<div class="d-when"><div class="d-day">'+d.day+'</div><div class="d-date">'+d.date+'</div><div class="d-mi num">'+d.miles+'</div></div>'
+      + '<div class="d-body" style="border-left-color:'+(isRace?"var(--gold)":meta.color)+'">'
+      + '<div class="pill-row">'
+        + '<span class="pill" style="color:'+meta.color+'">'+meta.label+'</span>'
+        + (d.strength ? '<span class="pill" style="color:var(--slate)">'+strengthMeta[d.strength]+'</span>' : '')
+      + '</div>'
+      + '<div class="d-title">'+d.title+'</div>'
+      + '<div class="d-detail">'+d.detail+'</div>'
+      + '</div></div>';
+  });
+  panel.innerHTML = html;
+}
+
+function selectWeek(n){
+  activeWeek = n;
+  renderCourseLine();
+  renderTabs();
+  renderWeek();
+  document.getElementById("week-panel").scrollIntoView({behavior:"smooth", block:"nearest"});
+}
+
+renderCourseLine();
+renderTabs();
+renderWeek();
+</script>
+</body>
+</html>
